@@ -4,9 +4,12 @@ extern crate hyper_native_tls;
 #[macro_use]
 extern crate lazy_static;
 extern crate regex;
+extern crate clap;
 
 use std::io::Read;
 
+use clap::App;
+use clap::Arg;
 use regex::Regex;
 use hyper::Client;
 use hyper::net::HttpsConnector;
@@ -43,8 +46,24 @@ macro_rules! save_file {
 }
 
 fn main() {
+
+    let matches = App::new("v2ex-sign")
+        .author("sbw <sbw@sbw.so>")
+        .version("0.0.1")
+        .about("v2ex sign")
+        .arg(Arg::with_name("cookie")
+                 .short("c")
+                 .takes_value(true)
+                 .default_value("cookie")
+                 .help("cookie file"))
+        .get_matches();
+
+    let cookie_file = matches.value_of("cookie").unwrap();
+    println!("use cookie file: {}", cookie_file);
+
     let url = "https://www.v2ex.com/mission/daily";
-    let cookie = read_file!("cookie").trim().to_owned();
+    let cookie = read_file!(cookie_file).trim().to_owned();
+    println!("use cookie: {}", cookie);
 
     let mut headers = Headers::new();
     headers.set_raw("Cookie", vec![cookie.into_bytes()]);
@@ -53,7 +72,6 @@ fn main() {
     let mut response = CLIENT.get(url).headers(headers.clone()).send().unwrap();
     let mut buf = String::new();
     response.read_to_string(&mut buf).unwrap();
-
 
     let regex = Regex::new(r#"/mission/daily/redeem\?once=\d+"#).unwrap();
     let caps = match regex.captures(&buf) {
