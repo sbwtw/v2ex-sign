@@ -1,0 +1,10 @@
+[package]
+name = "v2ex-sign"
+version = "0.1.0"
+authors = ["石博文 <sbw@sbw.so>"]
+
+[dependencies]
+hyper = "*"
+hyper-native-tls = "*"
+regex = "*"
+lazy_static = "*"
