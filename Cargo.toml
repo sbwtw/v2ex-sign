@@ -5,7 +5,10 @@ authors = ["石博文 <sbw@sbw.so>"]
 
 [dependencies]
 hyper = "*"
-hyper-native-tls = "*"
+hyper-tls = "*"
+tokio-core = "*"
+futures = "*"
 regex = "*"
 lazy_static = "*"
 clap = "*"
+num_cpus = "*"
