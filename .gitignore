@@ -3,3 +3,4 @@ target/
 
 cookie
 rls.toml
+.vscode/
