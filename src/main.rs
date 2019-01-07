@@ -1,15 +1,11 @@
 
-extern crate clap;
-extern crate regex;
-extern crate reqwest;
-
 use std::io::Read;
 
 use clap::App;
 use clap::Arg;
 use regex::Regex;
 use reqwest::Client;
-use reqwest::header::Headers;
+use reqwest::header::HeaderMap;
 
 macro_rules! read_file {
     ($file:expr) => {{
@@ -53,13 +49,13 @@ fn main() {
     println!("use cookie file: {}", cookie_file);
 
     let cookie = read_file!(cookie_file).trim().to_owned();
-    let mut headers = Headers::new();
-    headers.set_raw("Cookie", vec![cookie.into_bytes()]);
-    headers.set_raw("Host", vec![b"www.v2ex.com".to_vec()]);
+    let mut headers = HeaderMap::new();
+    headers.insert("Cookie", cookie.parse().unwrap());
+    headers.insert("Host", "www.v2ex.com".parse().unwrap());
 
-    let client = Client::new().unwrap();
+    let client = Client::new();
     let url = "https://www.v2ex.com/mission/daily";
-    let mut response = client.get(url).unwrap().headers(headers.clone()).send().unwrap();
+    let mut response = client.get(url).headers(headers.clone()).send().unwrap();
     let mut buf = String::new();
     response.read_to_string(&mut buf).unwrap();
 
@@ -85,5 +81,5 @@ fn main() {
     let url = format!("https://www.v2ex.com{}", url);
     println!("{}", url);
 
-    client.get(&url).unwrap().headers(headers).send().unwrap();
+    client.get(&url).headers(headers).send().unwrap();
 }
