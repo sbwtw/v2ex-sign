@@ -4,8 +4,13 @@ version = "0.1.0"
 authors = ["石博文 <sbw@sbw.so>"]
 edition = "2018"
 
+[profile.release]
+lto = true
+
 [dependencies]
 regex = "*"
 lazy_static = "*"
 clap = "*"
-reqwest = "*"
+reqwest = { version = "*", features = ["rustls-tls"] }
+tokio = { version = "*", features = ["macros"] }
+cookies-rs = { path = "../cookies-rs" }
